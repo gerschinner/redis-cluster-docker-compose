@@ -1,6 +1,6 @@
 FROM redis:3
 
-MAINTAINER Li Yi <denverdino@gmail.com>
+MAINTAINER OZONE <hello@ozoneops.com>
 
 EXPOSE 26379
 ADD sentinel.conf /etc/redis/sentinel.conf
