@@ -1,5 +1,5 @@
-# redis-cluster 
-**Redis cluster with Docker Compose** 
+# redis-cluster-docker-compose
+**Redis cluster with Docker Compose**
 
 Using Docker Compose to setup a redis cluster with sentinel.
 
@@ -82,13 +82,13 @@ Check the status of redis cluster
 docker-compose ps
 ```
 
-The result is 
+The result is
 
 ```
          Name                        Command               State          Ports        
 --------------------------------------------------------------------------------------
 rediscluster_master_1     docker-entrypoint.sh redis ...   Up      6379/tcp            
-rediscluster_sentinel_1   docker-entrypoint.sh redis ...   Up      26379/tcp, 6379/tcp 
+rediscluster_sentinel_1   docker-entrypoint.sh redis ...   Up      26379/tcp, 6379/tcp
 rediscluster_slave_1      docker-entrypoint.sh redis ...   Up      6379/tcp     
 ```
 
@@ -110,15 +110,15 @@ Check the status of redis cluster
 docker-compose ps
 ```
 
-The result is 
+The result is
 
 ```
          Name                        Command               State          Ports        
 --------------------------------------------------------------------------------------
 rediscluster_master_1     docker-entrypoint.sh redis ...   Up      6379/tcp            
-rediscluster_sentinel_1   docker-entrypoint.sh redis ...   Up      26379/tcp, 6379/tcp 
-rediscluster_sentinel_2   docker-entrypoint.sh redis ...   Up      26379/tcp, 6379/tcp 
-rediscluster_sentinel_3   docker-entrypoint.sh redis ...   Up      26379/tcp, 6379/tcp 
+rediscluster_sentinel_1   docker-entrypoint.sh redis ...   Up      26379/tcp, 6379/tcp
+rediscluster_sentinel_2   docker-entrypoint.sh redis ...   Up      26379/tcp, 6379/tcp
+rediscluster_sentinel_3   docker-entrypoint.sh redis ...   Up      26379/tcp, 6379/tcp
 rediscluster_slave_1      docker-entrypoint.sh redis ...   Up      6379/tcp            
 rediscluster_slave_2      docker-entrypoint.sh redis ...   Up      6379/tcp            
 ```
@@ -127,7 +127,7 @@ Execute the test scripts
 ```
 ./test.sh
 ```
-to simulate stop and recover the Redis master. And you will see the master is switched to slave automatically. 
+to simulate stop and recover the Redis master. And you will see the master is switched to slave automatically.
 
 Or, you can do the test manually to pause/unpause redis server through
 
