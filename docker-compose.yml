@@ -1,10 +1,14 @@
 master:
   image: redis:3
+  ports:
+    - "5000:6379"
 slave:
   image: redis:3
   command: redis-server --slaveof redis-master 6379
   links:
     - master:redis-master
+  ports:
+    - "5001:6379"
 sentinel:
   build: sentinel
   environment:
