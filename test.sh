@@ -14,7 +14,6 @@ echo Redis Sentinel_2: $SENTINEL_IP2
 echo Redis Sentinel_3: $SENTINEL_IP3
 echo ------------------------------------------------
 
-
 echo "- Current sentinel status -"; echo ""
 docker exec redisclusterdockercompose_sentinel_1 redis-cli -p 26379 info Sentinel
 echo ""; echo "# Current master"
