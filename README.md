@@ -3,7 +3,6 @@
 
 Using Docker Compose to setup a redis cluster with sentinel.
 
-
 ## Prerequisite
 
 Install [Docker][4] and [Docker Compose][3] in testing environment
@@ -20,9 +19,11 @@ The template defines the topology of the Redis cluster
 
 ```
 master:
-  image: redis:4
+  image: redis:3
+  ports:
+    - "4000:6379"
 slave:
-  image: redis:4
+  image: redis:3
   command: redis-server --slaveof redis-master 6379
   links:
     - master:redis-master
@@ -30,26 +31,27 @@ sentinel:
   build: sentinel
   environment:
     - SENTINEL_DOWN_AFTER=5000
-    - SENTINEL_FAILOVER=5000    
+    - SENTINEL_FAILOVER=5000
   links:
     - master:redis-master
     - slave
+
 ```
 
 There are following services in the cluster,
 
-* master: Redis master
-* slave:  Redis slave
-* sentinel: Redis sentinel
+* Master: Redis master
+* Slave:  Redis slave
+* Sentinel: Redis sentinel
 
 
 The sentinels are configured with a "mymaster" instance with the following properties -
 
 ```
 sentinel monitor mymaster redis-master 6379 2
-sentinel down-after-milliseconds mymaster 5000
+sentinel down-after-milliseconds mymaster 4000
 sentinel parallel-syncs mymaster 1
-sentinel failover-timeout mymaster 5000
+sentinel failover-timeout mymaster 4000
 ```
 
 The details could be found in sentinel/sentinel.conf
@@ -60,8 +62,6 @@ The default values of the environment variables for Sentinel are as following
 * SENTINEL_DOWN_AFTER: 30000
 * SENTINEL_FAILOVER: 180000
 
-
-
 ## Play with it
 
 Build the sentinel Docker image
@@ -70,10 +70,24 @@ Build the sentinel Docker image
 docker-compose build
 ```
 
-Start the redis cluster
+Start the redis cluster with the proper scale & check the redis cluster
 
 ```
-docker-compose up -d
+docker-compose up -d --scale slave=2 --scale sentinel=3 && docker-compose ps
+```
+
+The result is
+
+```
+                Name                              Command               State           Ports
+------------------------------------------------------------------------------------------------------
+redisclusterdockercompose_master_1     docker-entrypoint.sh redis ...   Up      0.0.0.0:4000->6379/tcp
+redisclusterdockercompose_sentinel_1   sentinel-entrypoint.sh           Up      26379/tcp, 6379/tcp
+redisclusterdockercompose_sentinel_2   sentinel-entrypoint.sh           Up      26379/tcp, 6379/tcp
+redisclusterdockercompose_sentinel_3   sentinel-entrypoint.sh           Up      26379/tcp, 6379/tcp
+redisclusterdockercompose_slave_1      docker-entrypoint.sh redis ...   Up      6379/tcp
+redisclusterdockercompose_slave_2      docker-entrypoint.sh redis ...   Up      6379/tcp
+------------------------------------------------   
 ```
 
 Check the status of redis cluster
@@ -82,48 +96,7 @@ Check the status of redis cluster
 docker-compose ps
 ```
 
-The result is
-
-```
-         Name                        Command               State          Ports        
---------------------------------------------------------------------------------------
-rediscluster_master_1     docker-entrypoint.sh redis ...   Up      6379/tcp            
-rediscluster_sentinel_1   docker-entrypoint.sh redis ...   Up      26379/tcp, 6379/tcp
-rediscluster_slave_1      docker-entrypoint.sh redis ...   Up      6379/tcp     
-```
-
-Scale out the instance number of sentinel
-
-```
-docker-compose scale sentinel=3
-```
-
-Scale out the instance number of slaves
-
-```
-docker-compose scale slave=2
-```
-
-Check the status of redis cluster
-
-```
-docker-compose ps
-```
-
-The result is
-
-```
-         Name                        Command               State          Ports        
---------------------------------------------------------------------------------------
-rediscluster_master_1     docker-entrypoint.sh redis ...   Up      6379/tcp            
-rediscluster_sentinel_1   docker-entrypoint.sh redis ...   Up      26379/tcp, 6379/tcp
-rediscluster_sentinel_2   docker-entrypoint.sh redis ...   Up      26379/tcp, 6379/tcp
-rediscluster_sentinel_3   docker-entrypoint.sh redis ...   Up      26379/tcp, 6379/tcp
-rediscluster_slave_1      docker-entrypoint.sh redis ...   Up      6379/tcp            
-rediscluster_slave_2      docker-entrypoint.sh redis ...   Up      6379/tcp            
-```
-
-Execute the test scripts
+Execute the test script
 ```
 ./test.sh
 ```
